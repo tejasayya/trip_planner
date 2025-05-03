@@ -44,7 +44,7 @@ def setup_rag_pipeline(vectorstore):
 def setup_agents(rag_chain):
     if rag_chain is None:
         return None, None, None
-    # Itinerary Tool
+
     itinerary_tool = Tool(
         name="Itinerary Generator",
         func=rag_chain.run,
