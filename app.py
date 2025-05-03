@@ -14,7 +14,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
 # Set up Groq API key (replace with your actual key)
-os.environ["GROQ_API_KEY"] = "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"
+os.environ["GROQ_API_KEY"] = ""
 
 # Step 1: Load and Process Travel Documents
 def load_documents():
