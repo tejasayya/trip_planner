@@ -13,10 +13,8 @@ import streamlit as st
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
-# Set up Groq API key (replace with your actual key)
 os.environ["GROQ_API_KEY"] = ""
 
-# Step 1: Load and Process Travel Documents
 def load_documents():
     try:
         loader = WebBaseLoader(web_paths=["https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories.html"])
@@ -28,7 +26,6 @@ def load_documents():
         st.error(f"Error loading documents: {e}")
         return []
 
-# Step 2: Create Vector Store with Embeddings
 def create_vectorstore(chunks):
     if not chunks:
         return None
@@ -36,7 +33,6 @@ def create_vectorstore(chunks):
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
-# Step 3: Set Up RAG Pipeline
 def setup_rag_pipeline(vectorstore):
     if vectorstore is None:
         return None
@@ -45,7 +41,6 @@ def setup_rag_pipeline(vectorstore):
     rag_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
     return rag_chain
 
-# Step 4: Define Agents and Tools
 def setup_agents(rag_chain):
     if rag_chain is None:
         return None, None, None
@@ -55,26 +50,26 @@ def setup_agents(rag_chain):
         func=rag_chain.run,
         description="Generates a trip itinerary based on user input like destination and duration."
     )
-    # Booking Tool (Placeholder)
+
     booking_tool = Tool(
         name="Booking Searcher",
         func=lambda x: "Booking info: Flights and hotels (replace with real API call)",
         description="Searches for flights and hotels."
     )
-    # Real-Time Recommendation Tool (Placeholder)
+
     real_time_tool = Tool(
         name="Real-Time Assistant",
         func=lambda x: "Real-time recommendations (replace with real API call)",
         description="Provides real-time recommendations for nearby places."
     )
-    # Initialize Agents
+
     llm = ChatGroq(model="qwen-qwq-32b", temperature=0.6)
     itinerary_agent = initialize_agent([itinerary_tool], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
     booking_agent = initialize_agent([booking_tool], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
     real_time_agent = initialize_agent([real_time_tool], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
     return itinerary_agent, booking_agent, real_time_agent
 
-# Step 5: External API Placeholder Functions
+
 def search_flights(origin, destination, date):
     return f"Flight search from {origin} to {destination} on {date} (replace with Skyscanner API)"
 
@@ -91,16 +86,16 @@ def create_vectorstore(chunks):
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
-# Step 6: Streamlit User Interface
+
 def main():
     st.title("Trip Planning Assistant")
     st.write("Enter your trip details below to get started!")
 
-    # User Inputs
+
     query = st.text_input("What would you like to plan? (e.g., 'Plan a 3-day trip to Paris')")
     
     if query:
-        # Load and process data
+
         chunks = load_documents()
         if chunks:
             vectorstore = create_vectorstore(chunks)
@@ -110,7 +105,7 @@ def main():
             if itinerary_agent:
                 with st.spinner("Planning your trip..."):
                     try:
-                        # Handle different types of queries
+   
                         if "trip" in query.lower() or "plan" in query.lower():
                             response = itinerary_agent.run(query)
                             st.subheader("Your Itinerary")
